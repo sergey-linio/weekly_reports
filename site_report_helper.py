@@ -11,6 +11,7 @@ from sql2 import *
 from pandas.tseries.offsets import *
 
 import matplotlib.pyplot as plt
+plt.switch_backend('agg')
 from matplotlib.backends.backend_pdf import PdfPages
 from matplotlib.pyplot import subplots_adjust
 
@@ -273,10 +274,14 @@ def write_to_excel(country_tables_dict, file_name, folder):
 
     # or customize it as you want
     # full_file_name = 'site_report_international.xlsx'
-
+    sheet_name = 'All_countries'
+    i=0
     # to excel
     writer = pd.ExcelWriter(full_file_name)
-    [proper_order(value).to_excel(writer, key, na_rep='NaN') for key, value in country_tables_dict.items()]
+    for index, (key, value) in enumerate(country_tables_dict.items()):
+        proper_order(value).to_excel(writer, sheet_name, na_rep='NaN',startrow=index*15)
+        pd.DataFrame({key:[key]}).to_excel(writer,sheet_name,startrow=index*15, startcol = 0, header=False, index=False)
+    #[proper_order(value).to_excel(writer, key, na_rep='NaN') for key, value in country_tables_dict.items()]
     writer.save()
 
 
@@ -565,25 +570,25 @@ def get_plots(plot_df, device, os, country):
     currency = CURRENCY_DICT[country]
 
     # values for plots
-    orders_w = np.array(pd.rolling_mean(plot_df.orders, 7))
-    orders_4w = np.array(pd.rolling_mean(plot_df.orders, 28))
-    orders_12w = np.array(pd.rolling_mean(plot_df.orders, 84))
-    orders_24w = np.array(pd.rolling_mean(plot_df.orders, 168))
+    orders_w = np.array(plot_df.orders.rolling(window=7,center=False).mean()) 
+    orders_4w = np.array(plot_df.orders.rolling(window=28,center=False).mean()) 
+    orders_12w = np.array(plot_df.orders.rolling(window=84,center=False).mean()) 
+    orders_24w = np.array(plot_df.orders.rolling(window=168,center=False).mean()) 
 
-    avg_order_value_w = np.array(pd.rolling_mean(plot_df.avg_order_value, 7))
-    avg_order_value_4w = np.array(pd.rolling_mean(plot_df.avg_order_value, 28))
-    avg_order_value_12w = np.array(pd.rolling_mean(plot_df.avg_order_value, 84))
-    avg_order_value_24w = np.array(pd.rolling_mean(plot_df.avg_order_value, 168))
+    avg_order_value_w = np.array(plot_df.avg_order_value.rolling(window=7,center=False).mean()) 
+    avg_order_value_4w = np.array(plot_df.avg_order_value.rolling(window=28,center=False).mean()) 
+    avg_order_value_12w = np.array(plot_df.avg_order_value.rolling(window=84,center=False).mean()) 
+    avg_order_value_24w = np.array(plot_df.avg_order_value.rolling(window=168,center=False).mean()) 
 
-    visits_w = np.array(pd.rolling_mean(plot_df.visits, 7))
-    visits_4w = np.array(pd.rolling_mean(plot_df.visits, 28))
-    visits_12w = np.array(pd.rolling_mean(plot_df.visits, 84))
-    visits_24w = np.array(pd.rolling_mean(plot_df.visits, 168))
+    visits_w = np.array(plot_df.visits.rolling(window=7,center=False).mean()) 
+    visits_4w = np.array(plot_df.visits.rolling(window=28,center=False).mean()) 
+    visits_12w = np.array(plot_df.visits.rolling(window=84,center=False).mean()) 
+    visits_24w = np.array(plot_df.visits.rolling(window=168,center=False).mean()) 
 
-    bounce_rate_w = np.array(pd.rolling_mean(plot_df.bounce_rate, 7))
-    bounce_rate_4w = np.array(pd.rolling_mean(plot_df.bounce_rate, 28))
-    bounce_rate_12w = np.array(pd.rolling_mean(plot_df.bounce_rate, 84))
-    bounce_rate_24w = np.array(pd.rolling_mean(plot_df.bounce_rate, 168))
+    bounce_rate_w = np.array(plot_df.bounce_rate.rolling(window=7,center=False).mean()) 
+    bounce_rate_4w = np.array(plot_df.bounce_rate.rolling(window=28,center=False).mean()) 
+    bounce_rate_12w = np.array(plot_df.bounce_rate.rolling(window=84,center=False).mean()) 
+    bounce_rate_24w = np.array(plot_df.bounce_rate.rolling(window=168,center=False).mean()) 
 
     date = np.array(plot_df.date)
 

@@ -199,8 +199,7 @@ search_report = """SELECT
       ROUND(SUM(totals.totalTransactionRevenue)/1000000) revenue,
       AVG(totals.transactions) AS basket_size,
       AVG(totals.timeOnSite) AS session_duration
-    FROM (TABLE_DATE_RANGE([{dataset_num}.ga_sessions_], TIMESTAMP('{date_begin}'), TIMESTAMP('{date_end}'))) 
-    WHERE NOT (trafficSource.medium CONTAINS 'affi')),
+    FROM (TABLE_DATE_RANGE([{dataset_num}.ga_sessions_], TIMESTAMP('{date_begin}'), TIMESTAMP('{date_end}'))) ),
     (
     SELECT
       'search sessions' AS GROUP,
@@ -212,8 +211,7 @@ search_report = """SELECT
       AVG(totals.timeOnSite) AS session_duration
     FROM (TABLE_DATE_RANGE([{dataset_num}.ga_sessions_], TIMESTAMP('{date_begin}'), TIMESTAMP('{date_end}')))
     WHERE
-      hits.page.searchKeyword IS NOT NULL and
-      NOT (trafficSource.medium CONTAINS 'affi')));"""
+      hits.page.searchKeyword IS NOT NULL));"""
 
 term_report = """SELECT
   a.hits.page.searchKeyword as Term,
@@ -427,9 +425,8 @@ from
   ROUND(AVG(totals.timeOnSite),2) AS session_duration
 FROM (TABLE_DATE_RANGE([{dataset_num}.ga_sessions_], TIMESTAMP('{date_begin}'), TIMESTAMP('{date_end}')))
 WHERE
-  NOT (trafficSource.medium CONTAINS 'affi') and 
-  (device.deviceCategory = 'desktop'
-  OR device.deviceCategory = 'tablet')
+  device.deviceCategory = 'desktop'
+  OR device.deviceCategory = 'tablet'
 GROUP BY
   device.deviceCategory),
   (SELECT
@@ -446,7 +443,6 @@ GROUP BY
   ROUND(AVG(totals.timeOnSite),2) AS session_duration
 FROM (TABLE_DATE_RANGE([{dataset_num}.ga_sessions_], TIMESTAMP('{date_begin}'), TIMESTAMP('{date_end}')))
 WHERE
-  NOT (trafficSource.medium CONTAINS 'affi') and
   device.deviceCategory = 'mobile'
     AND (device.operatingSystem = 'Android'
       OR device.operatingSystem = 'iOS')
@@ -467,10 +463,9 @@ GROUP BY
   ROUND(AVG(totals.timeOnSite),2) AS session_duration
 FROM (TABLE_DATE_RANGE([{dataset_num}.ga_sessions_], TIMESTAMP('{date_begin}'), TIMESTAMP('{date_end}')))
 WHERE
-  NOT (trafficSource.medium CONTAINS 'affi') and
-  (device.deviceCategory = 'mobile'
+  device.deviceCategory = 'mobile'
   or device.deviceCategory = 'tablet'
-  or device.deviceCategory = 'desktop'));"""
+  or device.deviceCategory = 'desktop');"""
 
 temp_profile = """SELECT
   *
